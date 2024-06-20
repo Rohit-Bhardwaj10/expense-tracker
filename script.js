@@ -42,14 +42,13 @@ function add(amount,date,remarks,source,ul,num){
     if(amount.value === '' || date.value==='' || remarks.value===''||source.value===''){
         alert("please fill out the neccesary feilds!")
     }
-    else{
+    else if(amount.value>0 && source.value!="select type"){
         let li=document.createElement("li")
         
         li.innerHTML=`<span class = "color">${amount.value}</span> from <span class="color">${remarks.value}</span> on <span class="color">${date.value}</span> as <span class="color" >${source.value}</span> `
 
         ul.appendChild(li)
-
-
+        
         let current=parseInt(num.value)||0
         let newcr=parseInt(amount.value)||0
         num.value=(current+newcr)
@@ -58,12 +57,19 @@ function add(amount,date,remarks,source,ul,num){
 
     } 
 
+    else{
+        alert("input correct data")
+    }
+
     amount.value=''
     date.value=''
     remarks.value=''
     source.value='select type'
-
 }
+let my_expense
+let my_budget
+let result
+
 
 balnace_num.innerHTML=0
 income_num.innerHTML=0
@@ -74,6 +80,12 @@ income_button.addEventListener('click',function(){
     balnace_num.textContent=balnace_num.value||0
 })
 
+function calc_percent(expense,budget){
+    my_expense=expense
+    my_budget=budget
+    result=((my_expense/my_budget)*100)
+     return result
+}
 
 expense_num.innerHTML=0
 expense_button.addEventListener('click',function(){
@@ -84,6 +96,8 @@ expense_button.addEventListener('click',function(){
     balnace_num.value=(oldbalance-newbalance)
     balnace_num.textContent=balnace_num.value
 })
+
+
 budget_button.addEventListener('click',function(e){
     e.preventDefault()
 })
