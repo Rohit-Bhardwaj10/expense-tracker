@@ -189,7 +189,7 @@ budget_button.addEventListener("click", function (e) {
   e.preventDefault();
 });
 
-let temp_budget;
+let temp_budget=0;
 let temp_budget_type;
 let temp_expense_source;
 budget_button.addEventListener("click", function () {
@@ -220,8 +220,7 @@ budget_button.addEventListener("click", function () {
   budget_amount.value = "";
   budget_type.value = "";
 });
-let percent;
-let temp_expense;
+let temp_expense=0;
 let initial = 0;
 expense_num.innerHTML = 0;
 expense_button.addEventListener("click", function () {
@@ -235,29 +234,22 @@ expense_button.addEventListener("click", function () {
     expense_history_ul,
     expense_num
   );
+
+
   //updating balance_num
   let oldbalance = balnace_num.value || 0;
   let newbalance = expense_num.value || 0;
   balnace_num.value = oldbalance - newbalance;
   balnace_num.textContent = balnace_num.value;
-  //budget section
-  // if (temp_budget_type === temp_expense_source) {
-  // percent = calc_percent(temp_expense, temp_budget);
-  // let newone = initial + percent;
-  // initial = newone;
-  // console.log(newone);
-
-  // let bar = (document.querySelector(".bar-color").style.width = `${newone}%`);
-  // document.querySelector(".progress").textContent = `${newone}%`;
-  // }
-
+  console.log(temp_expense);
+  console.log(temp_budget);
   let budgets = document.querySelectorAll("#budget-list-ul li");
   console.log(budgets);
   budgets.forEach((budget) => {
     let budgetType = budget.querySelector(".inLi").textContent;
     console.log(budgetType);
     console.log(temp_expense_source);
-    if (budgetType === temp_expense_source) {
+    if (budgetType === temp_expense_source && temp_expense<temp_budget) {
       let budgetValue = parseInt(budget.querySelector("span").textContent);
       console.log(budgetValue);
       let expenseValue = parseInt(expense_amount.value);
@@ -271,8 +263,12 @@ expense_button.addEventListener("click", function () {
       progressBar.style.width = `${newProgress}%`;
       progressText.textContent = `${newProgress.toFixed(2)}%`;
     }
+    else{
+      alert("budget limit exceeded")
+    }
   });
+// }
+// else{
+//   alert("budget exceede!")
+// }
 });
-//multiple budget m problem aa rhi h..
-//puraane bvariables ki h shyd........
-//charts
