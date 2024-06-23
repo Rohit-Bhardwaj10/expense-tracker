@@ -35,7 +35,7 @@ income_button.addEventListener("click", function (e) {
 expense_button.addEventListener("click", function (e) {
   e.preventDefault();
 });
-
+let temp_amount = 0;
 //function to update income,history and expense history...
 function add(amount, date, remarks, source, ul, num) {
   if (
@@ -60,11 +60,108 @@ function add(amount, date, remarks, source, ul, num) {
   } else {
     alert("input correct data");
   }
-
+  temp_amount = amount.value;
   amount.value = "";
   date.value = "";
   remarks.value = "";
   source.value = "select type";
+}
+
+document.addEventListener("DOMContentLoaded", initializeCharts);
+let incomeChart, expenseChart;
+
+function initializeCharts() {
+  const ctxIncome = document.getElementById("incomeChart").getContext("2d");
+  incomeChart = new Chart(ctxIncome, {
+    type: "pie",
+    data: {
+      labels: [], // dates or remarks
+      datasets: [
+        {
+          label: "income",
+          data: [],
+          backgroundColor: [
+            "rgba(255, 99, 132, 0.2)",
+            "rgba(54, 162, 235, 0.2)",
+            "rgba(255, 206, 86, 0.2)",
+            "rgba(75, 192, 192, 0.2)",
+            "rgba(153, 102, 255, 0.2)",
+            "rgba(255, 159, 64, 0.2)",
+          ],
+          borderColor: [
+            "rgba(255, 99, 132, 1)",
+            "rgba(54, 162, 235, 1)",
+            "rgba(255, 206, 86, 1)",
+            "rgba(75, 192, 192, 1)",
+            "rgba(153, 102, 255, 1)",
+            "rgba(255, 159, 64, 1)",
+          ],
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "top",
+        },
+        title: {
+          display: true,
+          text: "income chart",
+        },
+      },
+    },
+  });
+
+  const ctxExpense = document.getElementById("incomeChart").getContext("2d");
+  expenseChartChart = new Chart(ctxExpense, {
+    type: "pie",
+    data: {
+      labels: [], // dates or remarks
+      datasets: [
+        {
+          label: "expense",
+          data: [],
+          backgroundColor: [
+            "rgba(255, 99, 132, 0.2)",
+            "rgba(54, 162, 235, 0.2)",
+            "rgba(255, 206, 86, 0.2)",
+            "rgba(75, 192, 192, 0.2)",
+            "rgba(153, 102, 255, 0.2)",
+            "rgba(255, 159, 64, 0.2)",
+          ],
+          borderColor: [
+            "rgba(255, 99, 132, 1)",
+            "rgba(54, 162, 235, 1)",
+            "rgba(255, 206, 86, 1)",
+            "rgba(75, 192, 192, 1)",
+            "rgba(153, 102, 255, 1)",
+            "rgba(255, 159, 64, 1)",
+          ],
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "top",
+        },
+        title: {
+          display: true,
+          text: "expense chart",
+        },
+      },
+    },
+  });
+}
+
+function updateChart(chart, label, amount) {
+  chart.data.labels.push(label);
+  chart.data.datasets[0].data.push(amount);
+  chart.update();
 }
 
 balnace_num.innerHTML = 0;
@@ -81,18 +178,12 @@ income_button.addEventListener("click", function () {
   //updating balance_num
   balnace_num.value = income_num.value || 0;
   balnace_num.textContent = balnace_num.value || 0;
+  updateChart(incomeChart, income_date.value, income_amount.value);
 });
 
 let my_expense;
 let my_budget;
 let result;
-
-function calc_percent(expense, budget) {
-  my_expense = expense;
-  my_budget = budget;
-  result = (my_expense / my_budget) * 100;
-  return result;
-}
 
 budget_button.addEventListener("click", function (e) {
   e.preventDefault();
@@ -107,14 +198,14 @@ budget_button.addEventListener("click", function () {
   } else if (budget_amount.value > 0) {
     let li = document.createElement("li");
 
-    li.innerHTML = `<li>
+    li.innerHTML = `
                         <p class="inLi">${budget_type.value}</p>
                         <span style="display:inline">${budget_amount.value}</span>
                         <div class="bar">
                             <div class="bar-color" style="width:0%"></div>
                         </div>
                         <span class="progress" style="dispaly:inline;"></span>
-                    </li>`;
+                    `;
     budget_list_ul.appendChild(li);
 
     let option = document.createElement("option");
@@ -150,15 +241,38 @@ expense_button.addEventListener("click", function () {
   balnace_num.value = oldbalance - newbalance;
   balnace_num.textContent = balnace_num.value;
   //budget section
-  if (temp_budget_type === temp_expense_source) {
-    percent = calc_percent(temp_expense, temp_budget);
-    let newone = initial + percent;
-    initial = newone;
-    console.log(newone);
+  // if (temp_budget_type === temp_expense_source) {
+  // percent = calc_percent(temp_expense, temp_budget);
+  // let newone = initial + percent;
+  // initial = newone;
+  // console.log(newone);
 
-    let bar = (document.querySelector(".bar-color").style.width = `${newone}%`);
-    document.querySelector(".progress").textContent = `${newone}%`;
-  }
+  // let bar = (document.querySelector(".bar-color").style.width = `${newone}%`);
+  // document.querySelector(".progress").textContent = `${newone}%`;
+  // }
+
+  let budgets = document.querySelectorAll("#budget-list-ul li");
+  console.log(budgets);
+  budgets.forEach((budget) => {
+    let budgetType = budget.querySelector(".inLi").textContent;
+    console.log(budgetType);
+    console.log(temp_expense_source);
+    if (budgetType === temp_expense_source) {
+      let budgetValue = parseInt(budget.querySelector("span").textContent);
+      console.log(budgetValue);
+      let expenseValue = parseInt(expense_amount.value);
+      console.log(expenseValue);
+      let progressBar = budget.querySelector(".bar-color");
+      let progressText = budget.querySelector(".progress");
+      let currentProgress = parseFloat(progressText.textContent) || 0;
+      console.log(currentProgress);
+      let newProgress = currentProgress + (temp_amount / budgetValue) * 100;
+      console.log(newProgress);
+      progressBar.style.width = `${newProgress}%`;
+      progressText.textContent = `${newProgress.toFixed(2)}%`;
+    }
+  });
 });
-//multiple budget m problem aa rhi h.. 
+//multiple budget m problem aa rhi h..
 //puraane bvariables ki h shyd........
+//charts
