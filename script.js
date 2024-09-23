@@ -60,7 +60,8 @@ function createlistelement(amount, remarks, date, source, ul) {
   ul.appendChild(li);
 }
 
-
+let clone_source;
+let clone_amount;
 function addhistory(amount,date,remarks,source,ul){
   if (
     amount.value === "" ||
@@ -80,10 +81,13 @@ function addhistory(amount,date,remarks,source,ul){
       source,
       ul
     );
-    // cleareverything(amount, date, remarks, source);
+    clone_source=source.value
+    clone_amount=amount.value
+    console.log(clone_source);
+    cleareverything(amount, date, remarks, source);
   }
 }
-
+// console.log(clone_source);
 function updatedashboard(array,num) {
   const total = array.reduce((acc, income) => acc + income, 0);
   if(total>0){
@@ -132,6 +136,9 @@ function handlebudget(){
 
 function bar_length() {
   let bar_length = ((expense_amount.value / temp_budget) * 100);
+  console.log(expense_amount.value);
+  console.log(temp_budget);
+  console.log(bar_length);
   return bar_length;
 }
 
@@ -144,7 +151,7 @@ function makebudgetbar(){
                         <p class="inLi">${budget_type.value}</p>
                         <span style="display:inline">${budget_amount.value}</span>
                         <div class="bar">
-                            <div class="bar-color" style="width:${bar_length()}%"></div>
+                            <div class="bar-color"></div>
                         </div>
                         <span class="progress" style="dispaly:inline;"></span>
                     `;
@@ -156,44 +163,49 @@ function makebudgetbar(){
 }
 }
 
-//managing th expense section
+//managing the expense section
 
 expense_button.addEventListener('click',handleexpense)
 
 
-let length=0
+
+let budgetProgress = {};
 function handleexpense() {
   expense_array.push(parseInt(expense_amount.value));
   console.log(parseInt(expense_amount.value))
-  length+=bar_length()
+  // length+=bar_length()
   addhistory(expense_amount,expense_date,expense_remarks,expense_source,expense_history_ul);
   updatedashboard(expense_array,expense_num);
   update_balance()
   console.log(temp_budget);
+  console.log(expense_amount.value);
   console.log(length);
   console.log(budget_type.value);
   console.log(expense_source.value);
-  updateBudgetBar(length)
+  updateBudgetBar()
   // cleareverything(expense_amount,expense_date,expense_remarks,expense_source)
 }
-function updateBudgetBar(length) {
-  const bars= document.querySelectorAll("#budget-list-ul li");
-  console.log(budget_type.value); 
-  console.log(expense_source.value);
-  bars.forEach((bar)=>{
-    if(budget_type.value==expense_source.value){
-      let barnew= bar.querySelector(".bar-color");
-        barnew.style.width = `${length}%`;
-        console.log(length)
-        console.log("if working")
+function updateBudgetBar() {
+  const bars = document.querySelectorAll("#budget-list-ul li");
+  bars.forEach((bar) => {
+    const barType = bar.querySelector(".inLi").innerText;
+    if (barType === clone_source) {
+      let barnew = bar.querySelector(".bar-color");
+      if (!budgetProgress[barType]) {
+        budgetProgress[barType] = 0;
+      }
+      budgetProgress[barType] += (parseInt(clone_amount) / temp_budget) * 100;
+      barnew.style.width = `${budgetProgress[barType]}%`;
+      console.log("if working");
     }
-    else{
-      alert("budget limit exceeded")
-    }
+
   })
 } 
 
-//selecting the latest element of expense history (by adding the class number  to it and increasing that number by 1 each time)
+// ====>>>issues
+//selecting the latest element of expense history (by adding the class number  to it and increasing that number by 1 each time) resolved✅
+//updating the budget bar (length) 
+// clearing the form after submission(right times)
 
 
 
