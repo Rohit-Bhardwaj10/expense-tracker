@@ -81,7 +81,7 @@ body {
 .first-page {
   width: 100%;
   height: calc(100vh);
-  background-image: url(./Meteor.svg);
+  background-image: url(./assets/Meteor.svg);
   background-size: cover;
   display: flex;
   align-items: center;
@@ -262,6 +262,7 @@ body {
   gap: 1rem;
   background-color: rgb(37, 79, 134);
   flex-direction: column;
+  color: white;
 }
 .input-feild input {
   padding: 0.5rem;
@@ -270,9 +271,14 @@ body {
   color: white;
   border: 1px solid var(--text-1);
 }
+
+.input-feild input::placeholder{
+  color: white;
+}
+
 .input-feild select {
   background-color: rgb(37, 79, 134);
-  /* border: none; */
+  color: #fff;
 }
 .input-btn {
   text-align: center;
@@ -632,6 +638,6 @@ option {
 }
 
 canvas{
-  background-color: black;
+  /* background-color: black; */
   margin:10px 0 0 0;
 }
